@@ -1,4 +1,4 @@
 # should not contain sytax error
-myName = 'xxx yyy'
-myTechID = '0000000'
-myTechEmail = 'abc123' #only your email id omit @latech.edu
+myName = 'Yead Rahman'
+myTechID = '10406508'
+myTechEmail = 'yra006' #only your email id omit @latech.edu
