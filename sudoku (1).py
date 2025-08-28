@@ -1,7 +1,7 @@
 # Provide your information as the values of these variables:
-myName = 'Yead, Rahman'
-myTechID = '10406508'
-myTechEmail = 'yra006' #only your email id omit @latech.edu
+myName = 'first_name, last_name'
+myTechID = '0000000'
+myTechEmail = 'abc123' #only your email id omit @latech.edu
 ###########################################################
 
 import sys
@@ -41,7 +41,7 @@ def getGroups(matrix):
 def cardinality(x):
   return len(x)
 
-def rule1(group):
+#def rule1(group):
   ### IMPLEMENT THIS FUNCTION ###
 
   changed = False
@@ -55,25 +55,13 @@ def rule1(group):
   
   # go through all the elements of the group which are alredy sorted from
   # smallest to largest cardinality
-  
-  sets = [s for s in group if len(s) > 1]
-  
 
-  # get the cardinality of the set     
-  freq = {}
-  for s in sets:
-    key = tuple(sorted(s))
-    freq[key] = freq.get(key, 0) + 1  
+  # get the cardinality of the set       
+
   # if there are cardinality sets with cardinality elements then the other
   # sets can't have any of these values in them since these sets will have
   # to each have one of the cardinality values 
-  for s in sets:
-    key = tuple(sorted(s))
-    if freq[key] == len(s):
-      for t in group:
-        if t != s:
-          if t.difference_update(s):
-            changed = True
+
   # go through the sets and for each set different from the given set take
   # out all the elements that are in given set
 
@@ -85,32 +73,21 @@ def rule2(group):
   changed = False
   # RULE 2 - Reduce set size by throwing away elements that appear in other
   # sets in the group
+  for i in group:
+    for j in group:
+      if i!=j:
+        for val in i:
+          if val in j:
+            j.discard(val)
+            changed=True
+
 
 
   # pick an element of the group
-  for i in range(len(group)):
-    curr_set = group[i]
-    curr_vals = set(curr_set)
-    
-    for j in range(len(group)):
-      if i == j:
-        continue
-        
-      other_set = group[j]
-      other_vals = set(other_set)
 
   # for all the other elements of the group remove the elements that appear
   # in other elements of the group. These can be satisfied by other elements
   # of the group
-      intersection = other_vals & curr_vals
-      if len(intersection) > 0:
-        other_set.difference_update(intersection)
-        if len(other_set) == 1:
-          # if other_set now has only one value, remove it from all other sets in the group
-          for k in range(len(group)):
-            if k != j and k != i:
-              group[k].discard(list(other_set)[0])
-          changed = True
 
   # When done, if there is one value left then it can only be satisfied by
   # this cell. This is a most constrained rule. If end up with 0 elements,
@@ -125,7 +102,7 @@ def reduceGroup(group):
   # this sorts the sets from smallest to largest based cardinality
   group.sort(key=cardinality)
   changed = rule2(group)
-  changed = rule1(group)
+  #changed = rule1(group)
   
   return changed
 
@@ -144,6 +121,62 @@ def reduce(matrix):
     while changed:
         changed = reduceGroups(groups)
 
+def solutionViable(matrix):
+  for i in range(9):
+
+    for j in range(9):
+      if(len(matrix)[i][j]==0):
+        return False
+    return True
+  
+def solutionOK(matrix):
+  for i in range(9):
+    for j in range(9):
+      if(len(matrix[i][j])!=1):
+        return False
+  for therow in matrix:
+    if len(union(theRow))!=9:
+      return False
+  for j in range(9):
+    theColumn=getColumn(matrix,j)
+    if len(union(thecolumn))!=9:
+      return False
+  for i in range(9):
+    for j in range(9):
+      theSquare=getSquare(matrix,i,j)
+      if len(union(theSquare))!=9:
+        return False
+  return True
+
+def union(group):
+  result=set([])
+  for s in group:
+    result.update(s)
+  return result
+
+
+
+
+def solve(matrix):
+  reduce(matrix)
+
+  if not solutionViabke(matrix):
+    return None
+  if solutionOK(matrix):
+    return matrix
+  print ("searching....")
+  
+  for i in range (9):
+    for j in range(9):
+      if len (matrix[i][j])>1:
+        for k in matrix [i][j]:
+          mcopy=copy.deepcopy(matrix)
+          mcopy[i][j]=set([k])
+          result=solve(mcopy)
+          if result!=None:
+            return result
+  return None
+
 def printMatrix(matrix):
   for i in range(9):
     for j in range(9):
@@ -156,8 +189,7 @@ def printMatrix(matrix):
     sys.stdout.write("\n")
 
 def main():
-  #file = open(sys.argv[1], "r")
-  file=open("test-1.txt", "r")
+  file = open("test-1.txt", "r")
   matrix = []
 
   for line in file:
@@ -175,6 +207,12 @@ def main():
 
   print("Solving this puzzle:")
   printMatrix(matrix)
+  print("Begin Solving....")
+  matrix=solve(matrix)
+  if matrix==None:
+    print()
+    print("No solution found.")
+    return
 
   reduce(matrix)  
 

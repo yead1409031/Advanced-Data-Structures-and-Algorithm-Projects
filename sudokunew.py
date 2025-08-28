@@ -1,7 +1,7 @@
 # Provide your information as the values of these variables:
-myName = 'Yead, Rahman'
-myTechID = '10406508'
-myTechEmail = 'yra006' #only your email id omit @latech.edu
+myName = 'first_name, last_name'
+myTechID = '0000000'
+myTechEmail = 'abc123' #only your email id omit @latech.edu
 ###########################################################
 
 import sys
@@ -41,7 +41,7 @@ def getGroups(matrix):
 def cardinality(x):
   return len(x)
 
-def rule1(group):
+#def rule1(group):
   ### IMPLEMENT THIS FUNCTION ###
 
   changed = False
@@ -55,62 +55,44 @@ def rule1(group):
   
   # go through all the elements of the group which are alredy sorted from
   # smallest to largest cardinality
-  
-  sets = [s for s in group if len(s) > 1]
-  
 
-  # get the cardinality of the set     
-  freq = {}
-  for s in sets:
-    key = tuple(sorted(s))
-    freq[key] = freq.get(key, 0) + 1  
+  # get the cardinality of the set       
+
   # if there are cardinality sets with cardinality elements then the other
   # sets can't have any of these values in them since these sets will have
   # to each have one of the cardinality values 
-  for s in sets:
-    key = tuple(sorted(s))
-    if freq[key] == len(s):
-      for t in group:
-        if t != s:
-          if t.difference_update(s):
-            changed = True
+
   # go through the sets and for each set different from the given set take
   # out all the elements that are in given set
 
   return changed
   
 def rule2(group):
-  ### IMPLEMENT THIS FUNCTION ###
-
   changed = False
-  # RULE 2 - Reduce set size by throwing away elements that appear in other
-  # sets in the group
+  for element in group:
+    if cardinality(element) > 1:
+      #before_len = cardinality(element)
+      for other_element in group:
+        if element != other_element and cardinality(other_element) > 1:
+          other_element.difference_update(element)
+    if cardinality(element) == 1:
+        # if we only have one possibility, this is the only value that can be
+        # assigned to this cell
+      for other_element in group:
+        if element != other_element and cardinality(other_element) > 1:
+          other_element.remove(element)
+        
+
+
+  return changed
+
 
 
   # pick an element of the group
-  for i in range(len(group)):
-    curr_set = group[i]
-    curr_vals = set(curr_set)
-    
-    for j in range(len(group)):
-      if i == j:
-        continue
-        
-      other_set = group[j]
-      other_vals = set(other_set)
 
   # for all the other elements of the group remove the elements that appear
   # in other elements of the group. These can be satisfied by other elements
   # of the group
-      intersection = other_vals & curr_vals
-      if len(intersection) > 0:
-        other_set.difference_update(intersection)
-        if len(other_set) == 1:
-          # if other_set now has only one value, remove it from all other sets in the group
-          for k in range(len(group)):
-            if k != j and k != i:
-              group[k].discard(list(other_set)[0])
-          changed = True
 
   # When done, if there is one value left then it can only be satisfied by
   # this cell. This is a most constrained rule. If end up with 0 elements,
@@ -118,14 +100,13 @@ def rule2(group):
   # improve the situation at all, let's continue looking at other elements
   # in the row. 
 
-  return changed
 
 def reduceGroup(group):
   changed = False 
   # this sorts the sets from smallest to largest based cardinality
   group.sort(key=cardinality)
   changed = rule2(group)
-  changed = rule1(group)
+  #changed = rule1(group)
   
   return changed
 
@@ -156,8 +137,7 @@ def printMatrix(matrix):
     sys.stdout.write("\n")
 
 def main():
-  #file = open(sys.argv[1], "r")
-  file=open("test-1.txt", "r")
+  file = open("test-1.txt", "r")
   matrix = []
 
   for line in file:
