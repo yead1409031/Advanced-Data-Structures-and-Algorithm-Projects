@@ -202,11 +202,3 @@ class HashSet:
             
         return True
     
-    def __getitem__(self, item):
-        idx = hash(item) % len(self.items)
-        while self.items[idx] != None:
-            if self.items[idx] == item:
-                return self.items[idx]
-            idx = (idx + 1) % len(self.items)
-        return None
-     
